@@ -6,15 +6,13 @@ A lightweight Firefox extension that automatically converts absolute sport times
 For many athletes, seeing a "50:00" 10k PR is less useful than seeing "5:00/km". This extension does the mental math for you, injecting pace data directly into the UI where it's missing.
 
 ## Gallery
-| Profile PRs | Map Popups |
+| Best effort pace | Compare pace |
 | :---: | :---: |
 | ![Best Efforts](./images/best-effors.png) | ![Compare PRs](./images/best-efforts-compare.png) |
-| *Best effort pace*  | *Comparing your pace with other athlete* |
 
-| Leaderboards | My Segments |
+| Leaderboards pace | Map pace |
 | :---: | :---: |
 | ![Segment Table](./images/crowns.png) | ![Map Pace](./images/map.png) |
-| *CRs and top10s pace column* | *Pace on map segments* |
 
 ## Features
 - **Profile PRs:** Replaces total time with pace in the "All-Time PRs" table.
