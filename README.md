@@ -31,6 +31,10 @@ For many athletes, seeing a "50:00" 10k PR is less useful than seeing "5:00/km".
 4. Click **"Load Temporary Add-on..."**.
 5. Select the `manifest.json` file in the project folder.
 
+### 2. Install from extension store
+
+https://addons.mozilla.org/en-US/firefox/addon/strava-pace-converter/
+
 ## License
 This project is open source under the MIT License.
 

@@ -16,8 +16,6 @@ function parseTimeToSeconds(timeStr) {
 function parseDistanceToKm(distText) {
         let distanceInKm = 0;
         
-        console.log(distText);
-
         if (distText == 'Marathon') {
             distanceInKm = 42.2;
         } else if (distText == 'Half-Marathon') {
@@ -30,8 +28,6 @@ function parseDistanceToKm(distText) {
         } else if (distText.includes('m')) {
             distanceInKm = parseFloat(distText) / 1000;
         }
-        
-        console.log(distanceInKm);
         
         return distanceInKm;
 }
@@ -76,8 +72,6 @@ function fixProfilePRs() {
     // Find all spans that define the "Best Efforts" / PR section
     const glossarySpans = document.querySelectorAll('span[data-glossary-term="definition-best-efforts"]');
     
-    console.log(glossarySpans);
-    
     glossarySpans.forEach(span => {
         // Navigate up: span -> th -> tr -> thead -> table -> tbody
         // Or more simply, find the closest table and then its tbody
@@ -86,13 +80,8 @@ function fixProfilePRs() {
 
         const rows = tbody.querySelectorAll('tr');
         
-        console.log("tr");
-        console.log(rows);
-
         rows.forEach(row => {
             const cells = row.querySelectorAll('td');
-            console.log("ROW");
-            console.log(cells);
             if (cells.length < 2) return;
 
             // Use the existing helper to parse distance from the first cell
@@ -204,7 +193,7 @@ const observer = new MutationObserver(() => {
         console.log("Running pace converter.");
 
         startObserving();
-    }, 200);
+    }, 100);
 });
 
 function startObserving() {
@@ -216,7 +205,3 @@ function startObserving() {
 
 startObserving();
 run();
-
-setTimeout(() => { run()}, 2000);
-
-console.log("Strava Pace Fixer");
