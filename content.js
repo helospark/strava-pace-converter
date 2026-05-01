@@ -73,34 +73,55 @@ function fixMapPopups() {
 }
 
 function fixProfilePRs() {
-    const prHeader = document.getElementById('all-time-prs');
-    if (!prHeader) return;
-    const targetTable = prHeader.nextElementSibling;
-    if (!targetTable || targetTable.tagName !== 'TBODY') return;
+    // Find all spans that define the "Best Efforts" / PR section
+    const glossarySpans = document.querySelectorAll('span[data-glossary-term="definition-best-efforts"]');
+    
+    console.log(glossarySpans);
+    
+    glossarySpans.forEach(span => {
+        // Navigate up: span -> th -> tr -> thead -> table -> tbody
+        // Or more simply, find the closest table and then its tbody
+        const tbody = span.closest('tbody');
+        if (!tbody) return;
 
-    targetTable.querySelectorAll('tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length < 2) return;
+        const rows = tbody.querySelectorAll('tr');
+        
+        console.log("tr");
+        console.log(rows);
 
-        const distanceKm = parseDistanceToKm(cells[0].textContent);
-        if (!distanceKm) return;
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            console.log("ROW");
+            console.log(cells);
+            if (cells.length < 2) return;
 
-        for (let i = 1; i < cells.length; i++) {
-            const link = cells[i].querySelector('a');
-            const timeStr = link ? link.textContent : cells[i].textContent;
-            if (timeStr.includes('/km')) continue;
+            // Use the existing helper to parse distance from the first cell
+            const distanceKm = parseDistanceToKm(cells[0].textContent);
+            if (!distanceKm) return;
 
-            const seconds = parseTimeToSeconds(timeStr);
-            if (seconds > 0) {
-                const paceInSeconds = seconds / distanceKm;
-                const paceMin = Math.floor(paceInSeconds / 60);
-                const paceSec = Math.floor(paceInSeconds % 60).toString().padStart(2, '0');
-                const paceStr = `${paceMin}:${paceSec} /km`;
+            // Process time cells (usually 2nd and 3rd)
+            for (let i = 1; i < cells.length; i++) {
+                const link = cells[i].querySelector('a');
+                const timeStr = link ? link.textContent : cells[i].textContent;
                 
-                if (link) link.textContent = paceStr;
-                else cells[i].textContent = paceStr;
+                if (timeStr.includes('/km')) continue;
+
+                const seconds = parseTimeToSeconds(timeStr);
+                if (seconds > 0) {
+                    const paceInSeconds = seconds / distanceKm;
+                    const paceMin = Math.floor(paceInSeconds / 60);
+                    const paceSec = Math.floor(paceInSeconds % 60).toString().padStart(2, '0');
+                    
+                    const paceHtml = `${paceMin}:${paceSec}\u00A0<span style="white-space: nowrap;">/km</span>`;
+                    
+                    if (link) {
+                        link.innerHTML = paceHtml;
+                    } else {
+                        cells[i].innerHTML = paceHtml;
+                    }
+                }
             }
-        }
+        });
     });
 }
 
@@ -183,7 +204,7 @@ const observer = new MutationObserver(() => {
         console.log("Running pace converter.");
 
         startObserving();
-    }, 100);
+    }, 200);
 });
 
 function startObserving() {
@@ -195,5 +216,7 @@ function startObserving() {
 
 startObserving();
 run();
+
+setTimeout(() => { run()}, 2000);
 
 console.log("Strava Pace Fixer");
