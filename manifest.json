@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Strava Pace Converter",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Converts Strava absolute times to min/km pace.",
   "permissions": ["activeTab"],
   "browser_specific_settings": {
@@ -14,7 +14,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://www.strava.com/athletes/*", "*://www.strava.com/maps/*"],
+      "matches": ["*://www.strava.com/*"],
       "js": ["content.js"]
     }
   ],
