@@ -24,21 +24,31 @@ For many athletes, seeing a "50:00" 10k PR is less useful than seeing "5:00/km".
 
 ## Installation
 
-### 1. Local Development / Private Use
+### Firefox
+
+#### 1. Local Development / Private Use
 1. Download this repository as a ZIP or clone it.
 2. Open Firefox and type `about:debugging` in the address bar.
 3. Click **"This Firefox"**.
 4. Click **"Load Temporary Add-on..."**.
 5. Select the `manifest.json` file in the project folder.
 
-### 2. Install from extension store
+#### 2. Install from extension store
 
 https://addons.mozilla.org/en-US/firefox/addon/strava-pace-converter/
+
+### Chrome
+
+1. Download this repository as a ZIP or clone it.
+2. Go to chrome://extensions/ and enable "Developer mode" in the top right
+3. Use **Load unpacked** and point it to the folder
+
 
 ## Release notes
 
 **1.0 to 1.2** - Initial release
 **1.3** - Added option to use mile/km, added multiple display options and flags to disable the conversion on several pages
+**1.4** - Change default value, add support for Chrome build
 
 ## License
 This project is open source under the MIT License.

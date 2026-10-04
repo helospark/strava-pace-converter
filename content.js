@@ -213,7 +213,7 @@ function run() {
             unit: 'km',
             convertMap: true,
             convertBestEffort: true,
-            showOriginalTime: true
+            showOriginalTime: false
         }).then((config) => {
             fixProfilePRs(config);
             fixMapPopups(config);
