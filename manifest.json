@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Strava Pace Converter",
-  "version": "1.1",
+  "version": "1.3",
   "description": "Converts Strava absolute times to min/km pace.",
   "permissions": ["activeTab"],
   "browser_specific_settings": {
@@ -11,6 +11,13 @@
         "required": ["none"]
       }
     }
+  },
+  "permissions": [
+    "storage"
+  ],
+  "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
   },
   "content_scripts": [
     {
@@ -23,6 +30,15 @@
     "96": "icons/icon96.png",
     "128": "icons/icon128.png"
   },
+    "action": {
+        "default_icon": {
+            "48": "icons/icon48.png",
+            "96": "icons/icon96.png",
+            "128": "icons/icon128.png"
+        },
+        "default_title": "Strava Pace Converter",
+        "default_popup": "options.html"
+    },
   "developer": {
     "name": "helospark",
     "url": "https://github.com/helospark/strava-pace-converter"

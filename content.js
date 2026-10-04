@@ -1,3 +1,24 @@
+function appendPaceContent(parent, paceValue, unit, originalTime = null) {
+    parent.textContent = '';
+    parent.style.whiteSpace = 'nowrap';
+
+    if (originalTime !== null) {
+        parent.appendChild(document.createTextNode(`${originalTime} (`));
+    }
+
+    parent.appendChild(document.createTextNode(`${paceValue}\u00A0`));
+
+    const unitSpan = document.createElement('span');
+    unitSpan.style.whiteSpace = 'nowrap';
+    unitSpan.textContent = unit == 'km' ? '/km' : '/mi';
+
+    parent.appendChild(unitSpan);
+
+    if (originalTime !== null) {
+        parent.appendChild(document.createTextNode(')'));
+    }
+}
+
 function parseTimeToSeconds(timeStr) {
     timeStr = timeStr.trim().split(' ')[0];
     
@@ -13,7 +34,7 @@ function parseTimeToSeconds(timeStr) {
     return 0;
 }
 
-function parseDistanceToKm(distText) {
+function parseDistanceToKm(distText, unit="km") {
         let distanceInKm = 0;
         
         if (distText == 'Marathon') {
@@ -29,17 +50,25 @@ function parseDistanceToKm(distText) {
             distanceInKm = parseFloat(distText) / 1000;
         }
         
+        // If user prefers miles, convert the km base distance into miles
+        if (unit != 'km') {
+            return distanceInKm / 1.60934;
+        }
+        
         return distanceInKm;
 }
 
-function fixMapPopups() {
-    const popups = document.querySelectorAll('.mapboxgl-popup-content');
+function fixMapPopups(config) {
+    if (config.convertMap === false) {
+      return;
+    }
+    const popups = document.querySelectorAll('div[data-testid="mre-popup"]');
     
     popups.forEach(popup => {
         // 1. Get Distance (Find span with title="Distance")
         const distSpan = popup.querySelector('span[title="Distance"]');
         if (!distSpan) return;
-        const distanceKm = parseDistanceToKm(distSpan.textContent);
+        const distanceKm = parseDistanceToKm(distSpan.textContent, config.unit);
         if (!distanceKm) return;
 
         // 2. Find Top Effort links (using partial class match)
@@ -49,7 +78,7 @@ function fixMapPopups() {
             const originalText = link.textContent.trim();
             
             // Skip if already converted or empty
-            if (originalText.includes('/km') || !originalText) return;
+            if (originalText.includes('/') || !originalText) return;
 
             const totalSeconds = parseTimeToSeconds(originalText);
             const parts = originalText.split(" - ");
@@ -59,7 +88,7 @@ function fixMapPopups() {
                 const paceMin = Math.floor(paceInSeconds / 60);
                 const paceSec = Math.floor(paceInSeconds % 60).toString().padStart(2, '0');
                 
-                link.textContent = `${paceMin}:${paceSec} /km`;
+                link.textContent = `${paceMin}:${paceSec} /${config.unit}`;
                 if (parts.length > 1) {
                    link.textContent += " - " + parts[1];
                 }
@@ -68,7 +97,11 @@ function fixMapPopups() {
     });
 }
 
-function fixProfilePRs() {
+function fixProfilePRs(config) {
+    if (config.convertBestEffort === false) {
+      return;
+    }
+
     // Find all spans that define the "Best Efforts" / PR section
     const glossarySpans = document.querySelectorAll('span[data-glossary-term="definition-best-efforts"]');
     
@@ -85,7 +118,7 @@ function fixProfilePRs() {
             if (cells.length < 2) return;
 
             // Use the existing helper to parse distance from the first cell
-            const distanceKm = parseDistanceToKm(cells[0].textContent);
+            const distanceKm = parseDistanceToKm(cells[0].textContent, config.unit);
             if (!distanceKm) return;
 
             // Process time cells (usually 2nd and 3rd)
@@ -93,7 +126,7 @@ function fixProfilePRs() {
                 const link = cells[i].querySelector('a');
                 const timeStr = link ? link.textContent : cells[i].textContent;
                 
-                if (timeStr.includes('/km')) continue;
+                if (timeStr.includes('/')) continue;
 
                 const seconds = parseTimeToSeconds(timeStr);
                 if (seconds > 0) {
@@ -101,12 +134,12 @@ function fixProfilePRs() {
                     const paceMin = Math.floor(paceInSeconds / 60);
                     const paceSec = Math.floor(paceInSeconds % 60).toString().padStart(2, '0');
                     
-                    const paceHtml = `${paceMin}:${paceSec}\u00A0<span style="white-space: nowrap;">/km</span>`;
+                    var originalTimeToAppend = config.showOriginalTime ? timeStr : null;
                     
                     if (link) {
-                        link.innerHTML = paceHtml;
+                        appendPaceContent(link, `${paceMin}:${paceSec}`, config.unit, originalTimeToAppend);
                     } else {
-                        cells[i].innerHTML = paceHtml;
+                        appendPaceContent(cells[i], `${paceMin}:${paceSec}`, config.unit, originalTimeToAppend);
                     }
                 }
             }
@@ -114,7 +147,7 @@ function fixProfilePRs() {
     });
 }
 
-function fixMySegmentsTable() {
+function fixMySegmentsTable(config) {
     const table = document.querySelector('table.my-segments');
     if (!table) return;
 
@@ -153,7 +186,7 @@ function fixMySegmentsTable() {
         const timeLink = timeCell.querySelector('a');
         const timeStr = timeLink ? timeLink.textContent : timeCell.textContent;
 
-        const distanceKm = parseDistanceToKm(distStr);
+        const distanceKm = parseDistanceToKm(distStr, config.unit);
         const totalSeconds = parseTimeToSeconds(timeStr);
 
         let paceStr = "—"; 
@@ -161,13 +194,13 @@ function fixMySegmentsTable() {
             const paceInSeconds = totalSeconds / distanceKm;
             const paceMin = Math.floor(paceInSeconds / 60);
             const paceSec = Math.floor(paceInSeconds % 60).toString().padStart(2, '0');
-            paceStr = `${paceMin}:${paceSec}\u00A0/km`;
+            paceStr = `${paceMin}:${paceSec}`;
         }
 
         // Create and insert the new cell
-        const paceHtml = `<span style="white-space: nowrap;">${paceStr}\u00A0</span>`;
         const paceCell = document.createElement('td');
-        paceCell.innerHTML = paceHtml;
+
+        appendPaceContent(paceCell, paceStr, config.unit);
         paceCell.classList.add('pace-cell');
         
         // Append to the end of the row to match the header placement
@@ -176,9 +209,16 @@ function fixMySegmentsTable() {
 }
 
 function run() {
-    fixProfilePRs();
-    fixMapPopups();
-    fixMySegmentsTable();
+    browser.storage.sync.get({
+            unit: 'km',
+            convertMap: true,
+            convertBestEffort: true,
+            showOriginalTime: true
+        }).then((config) => {
+            fixProfilePRs(config);
+            fixMapPopups(config);
+            fixMySegmentsTable(config);
+    });
 }
 
 let debounceTimer;
@@ -190,7 +230,6 @@ const observer = new MutationObserver(() => {
         observer.disconnect();
 
         run();
-        console.log("Running pace converter.");
 
         startObserving();
     }, 100);

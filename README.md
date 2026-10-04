@@ -1,6 +1,6 @@
 # Strava Pace Converter (Firefox Extension)
 
-A lightweight Firefox extension that automatically converts absolute sport times into **min/km pace** across the Strava web interface. Mainly for running and cycling.
+A lightweight Firefox extension that automatically converts absolute sport times into **min/km pace** or **min/mile** across the Strava web interface. Mainly for running and cycling.
 
 ## 🏃 Why this exists?
 For many athletes, seeing a "50:00" 10k PR is less useful than seeing "5:00/km". This extension does the mental math for you, injecting pace data directly into the UI where it's missing.
@@ -34,6 +34,11 @@ For many athletes, seeing a "50:00" 10k PR is less useful than seeing "5:00/km".
 ### 2. Install from extension store
 
 https://addons.mozilla.org/en-US/firefox/addon/strava-pace-converter/
+
+## Release notes
+
+**1.0 to 1.2** - Initial release
+**1.3** - Added option to use mile/km, added multiple display options and flags to disable the conversion on several pages
 
 ## License
 This project is open source under the MIT License.

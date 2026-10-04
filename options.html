@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strava Pace Converter Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <h1>Strava Pace Converter</h1>
+
+    <section>
+        <h2>Units</h2>
+
+        <label>
+            <input type="radio" name="paceUnit" value="km" id="unitKm">
+            Minutes per kilometer (min/km)
+        </label>
+
+        <label>
+            <input type="radio" name="paceUnit" value="mi" id="unitMile">
+            Minutes per mile (min/mile)
+        </label>
+    </section>
+
+    <section>
+        <h2>Conversion</h2>
+
+        <label>
+            <input type="checkbox" id="convertMap">
+            Convert pace on map
+        </label>
+
+        <label>
+            <input type="checkbox" id="convertBestEffort">
+            Convert pace for best effort
+        </label>
+
+        <label>
+            <input type="checkbox" id="showOriginalBestEffort">
+            Show original time for best effort
+        </label>
+    </section>
+
+    <script src="options.js"></script>
+</body>
+</html>
